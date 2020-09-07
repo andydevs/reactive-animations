@@ -7,7 +7,7 @@
 import './style/main.scss'
 import DraggableBox from './draggable-box';
 
-// Get app
+// Get app container
 let app = document.getElementById('app')
 
 // Create draggable boxes

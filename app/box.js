@@ -4,9 +4,21 @@
  * Author:  Anshul Kharbanda
  * Created: 9 - 7 - 2020
  */
+import { pixVal } from './vector';
 import { fromEvent } from 'rxjs';
 
+/**
+ * A box element with a click observer
+ */
 export default class Box {
+    /**
+     * Construct box
+     * 
+     * @param {HTMLElement} root element to put box in
+     * @param {int} x initial x position
+     * @param {int} y initial y position
+     * @param {string} color color of box
+     */
     constructor(root, x, y, color) {
         // Create element
         this.element = document.createElement('div')
@@ -20,13 +32,21 @@ export default class Box {
         this.clickObservable$ = fromEvent(this.element, 'click')
     }
 
+    /**
+     * Get current box position
+     */
     getPosition() {
         return {
-            x: vector.pixVal(this.element.style.left),
-            y: vector.pixVal(this.element.style.top)
+            x: pixVal(this.element.style.left),
+            y: pixVal(this.element.style.top)
         }
     }
 
+    /**
+     * Sets current box position
+     * 
+     * @param {object} pos next position
+     */
     setPosition(pos) {
         this.element.style.left = pos.x + 'px'
         this.element.style.top = pos.y + 'px'

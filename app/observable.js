@@ -12,7 +12,6 @@ import {
 } from 'rxjs';
 import { map, repeat, scan } from 'rxjs/operators';
 
-
 // Animation observable
 export const animationFrames$ = of(0, animationFrameScheduler)
     .pipe(
