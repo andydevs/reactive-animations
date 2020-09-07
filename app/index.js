@@ -51,29 +51,8 @@ class Box {
         this.element.style.top = y + 'px'
         root.appendChild(this.element)
 
-        // Bind handler functions
-        this.handleToggleSubscription = this.handleToggleSubscription.bind(this)
-        this.handleUpdatePosition = this.handleUpdatePosition.bind(this)
-
-        // Subscription holder
-        this.subscription = Subscription.EMPTY
-
-        // Create click observable
+        // Get click observable
         this.clickObservable$ = fromEvent(this.element, 'click')
-        this.clickObservable$.subscribe(this.handleToggleSubscription)
-    }
-
-    handleToggleSubscription() {
-        if (this.subscription.closed) {
-            this.subscription = mousePos$.subscribe(this.handleUpdatePosition)
-        }
-        else {
-            this.subscription.unsubscribe()
-        }
-    }
-    
-    handleUpdatePosition(pos) {
-        this.setPosition(pos)
     }
 
     getPosition() {
@@ -92,7 +71,28 @@ class Box {
 class DraggableBox extends Box {
     constructor(root, x, y, color, dragFactor) {
         super(root, x, y, color)
+
+        // Set drag factor
         this.dragFactor = dragFactor
+
+        // Subscription holder
+        this.subscription = Subscription.EMPTY
+
+        // Bind methods
+        this.handleToggleDrag = this.handleToggleDrag.bind(this)
+        this.handleUpdatePosition = this.handleUpdatePosition.bind(this)
+
+        // Subscribe drag toggler to click observer
+        this.clickObservable$.subscribe(this.handleToggleDrag)
+    }
+
+    handleToggleDrag() {
+        if (this.subscription.closed) {
+            this.subscription = mousePos$.subscribe(this.handleUpdatePosition)
+        }
+        else {
+            this.subscription.unsubscribe()
+        }
     }
 
     handleUpdatePosition(mousepos) {
@@ -109,6 +109,6 @@ class DraggableBox extends Box {
     }
 }
 
-let redbox = new Box(app, 100, 100, 'red')
+let redbox = new DraggableBox(app, 100, 100, 'red', 0.5)
 let bluebox = new DraggableBox(app, 200, 100, 'blue', 0.25)
 let greenbox = new DraggableBox(app, 300, 100, 'green', 0.05)
