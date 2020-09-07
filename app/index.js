@@ -6,37 +6,11 @@
  */
 import './style/main.scss'
 import * as vector from './vector';
+import * as observables from './observable';
 import { 
     fromEvent,
-    of,
-    animationFrameScheduler,
-    combineLatest,
     Subscription
 } from 'rxjs'
-import {
-    map,
-    repeat,
-    scan 
-} from 'rxjs/operators';
-
-// Animation observable
-let animationFrames$ = of(0, animationFrameScheduler)
-    .pipe(
-        repeat(),
-        scan(frame => frame + 1)
-    )
-
-// Mouse move position observable
-let mouseMovePos$ = fromEvent(document, 'mousemove')
-    .pipe(
-        map(event => ({ x: event.clientX, y: event.clientY }))
-    )
-
-// Tracks mouse position at every animation frame
-let mousePos$ = combineLatest(animationFrames$, mouseMovePos$)
-    .pipe(
-        map( ([frame, mousepos]) => mousepos )
-    )
 
 // Get app
 let app = document.getElementById('app')
@@ -88,7 +62,9 @@ class DraggableBox extends Box {
 
     handleToggleDrag() {
         if (this.subscription.closed) {
-            this.subscription = mousePos$.subscribe(this.handleUpdatePosition)
+            this.subscription = observables
+                .mousePos$
+                .subscribe(this.handleUpdatePosition)
         }
         else {
             this.subscription.unsubscribe()
@@ -109,6 +85,7 @@ class DraggableBox extends Box {
     }
 }
 
+// Create draggable boxes
 let redbox = new DraggableBox(app, 100, 100, 'red', 0.5)
 let bluebox = new DraggableBox(app, 200, 100, 'blue', 0.25)
 let greenbox = new DraggableBox(app, 300, 100, 'green', 0.05)
