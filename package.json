@@ -1,9 +1,9 @@
 {
-  "name": "my-website",
+  "name": "reactive-animations",
   "version": "1.0.0",
-  "description": "",
-  "author": "",
-  "keywords": [],
+  "description": "Experiments in using RxJS to reactively animate objects",
+  "author": "Anshul Kharbanda",
+  "keywords": ["rxjs", "reactive", "animations"],
   "license": "MIT",
   "private": true,
   "scripts": {
