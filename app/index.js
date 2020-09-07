@@ -5,17 +5,26 @@
  * Created: [Date of Creation]
  */
 import './style/main.scss'
-import elon from './assets/images/elon.jpg'
+import { fromEvent } from 'rxjs'
+import { map } from 'rxjs/operators';
 
 // Get app
 let app = document.getElementById('app')
-app.innerHTML = '<h1 id="title">Eyyyyy</h1>'
-    + `<img id="elon" src="${elon}">`
-    + '<button id="destupid">Make it less Stupid</button>'
 
-// Destupid button
-document.getElementById('destupid').addEventListener('click', function() {
-    document.getElementById('title').innerText = 'It\'s Elon!'
-    document.getElementById('elon').style.display = 'block'
-    document.getElementById('destupid').style.display = 'none'
+// Create redbox
+let redbox = document.createElement('div')
+redbox.classList.add('animated-box')
+redbox.classList.add('redbox')
+app.appendChild(redbox)
+
+// Mouse position observable
+let mousePos$ = fromEvent(document, 'mousemove')
+    .pipe(
+        map(event => ({ x: event.clientX, y: event.clientY }))
+    )
+
+// Move dom
+mousePos$.subscribe(pos => {
+    redbox.style.left = pos.x + 'px'
+    redbox.style.top = pos.y + 'px'
 })
