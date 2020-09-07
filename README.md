@@ -44,4 +44,4 @@ could be run with
 
 Or
 
-    $ npm run serve
+    $ npm start

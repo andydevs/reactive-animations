@@ -12,7 +12,7 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "serve": "webpack-dev-server"
+    "start": "webpack-dev-server"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
