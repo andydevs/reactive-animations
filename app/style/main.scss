@@ -25,11 +25,13 @@ body {
 .redbox {
     @extend .animated-box;
     background-color: red;
+    top: 100px;
+    left: 100px;
 }
 
 .bluebox {
     @extend .animated-box;
     background-color: blue;
-    left: 0px;
-    top: 0px;
+    top: 100px;
+    left: 200px;
 }
