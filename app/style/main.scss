@@ -23,9 +23,13 @@ body {
 }
 
 .redbox {
+    @extend .animated-box;
     background-color: red;
 }
 
 .bluebox {
+    @extend .animated-box;
     background-color: blue;
+    left: 0px;
+    top: 0px;
 }
