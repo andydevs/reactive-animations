@@ -6,7 +6,7 @@
  */
 import './style/main.scss'
 import * as vector from './vector';
-import { fromEvent, of, animationFrameScheduler } from 'rxjs'
+import { fromEvent, of, animationFrameScheduler, animationFrame } from 'rxjs'
 import { map, repeat } from 'rxjs/operators';
 
 // Animation observable
@@ -27,80 +27,79 @@ const speedFactor = 0.25
 // Get app
 let app = document.getElementById('app')
 
-// Create redbox
-let redbox = document.createElement('div')
-let redClickObserver$ = fromEvent(redbox, 'click')
-let redboxAnimationSubscriber = null
-let redboxMotionSubscriber = null
-let redboxMousePos = {}
-redbox.classList.add('redbox')
-app.appendChild(redbox)
+class Box {
+    constructor(root, x, y, color) {
+        // Create element
+        this.element = document.createElement('div')
+        this.element.classList.add('animated-box')
+        this.element.style.backgroundColor = color
+        this.element.style.left = x + 'px'
+        this.element.style.top = y + 'px'
+        root.appendChild(this.element)
 
-// Create bluebox
-let bluebox = document.createElement('div')
-let blueClickObserver$ = fromEvent(bluebox, 'click')
-let blueboxAnimationSubscriber = null
-let blueboxMotionSubscriber = null
-let blueboxMousePos = {}
-bluebox.classList.add('bluebox')
-app.appendChild(bluebox)
+        // Bind handler functions
+        this.handleClickObserver = this.handleClickObserver.bind(this)
 
-redClickObserver$.subscribe(event => {
-    if (redboxAnimationSubscriber || redboxMotionSubscriber) {
-        if (redboxMotionSubscriber) {
-            redboxMotionSubscriber.unsubscribe()
-            redboxMotionSubscriber = null
-        }
+        // Current mouse position
+        this.mousepos = {}
 
-        if (redboxAnimationSubscriber) {
-            redboxAnimationSubscriber.unsubscribe()
-            redboxAnimationSubscriber = null
-        }
+        // Click observer and subscriptions
+        this.clickObserver$ = fromEvent(this.element, 'click')
+        this.clickObserver$.subscribe(this.handleClickObserver)
     }
-    else {
-        redboxMotionSubscriber = mousePos$.subscribe(pos => {
-            redboxMousePos = pos
-        })
 
-        redboxAnimationSubscriber = animationFrames$.subscribe(() => {
-            redbox.style.left = redboxMousePos.x + 'px'
-            redbox.style.top = redboxMousePos.y + 'px'
-        })
-    }
-})
-
-blueClickObserver$.subscribe(event => {
-    if (blueboxAnimationSubscriber || blueboxMotionSubscriber) {
-        if (blueboxMotionSubscriber) {
-            blueboxMotionSubscriber.unsubscribe()
-            blueboxMotionSubscriber = null
+    handleClickObserver() {
+        if (this.subscription) {
+            this.subscription.unsubscribe()
+            this.subscription = null
         }
-
-        if (blueboxAnimationSubscriber) {
-            blueboxAnimationSubscriber.unsubscribe()
-            blueboxAnimationSubscriber = null
+        else {
+            this.subscription = mousePos$.subscribe(pos => {
+                this.mousepos = pos
+            })
+            this.subscription.add(animationFrames$.subscribe(() => {
+                this.updatePosition()
+            }))
         }
     }
-    else {
-        blueboxMotionSubscriber = mousePos$.subscribe(pos => {
-            blueboxMousePos = pos
-        })
 
-        blueboxAnimationSubscriber = animationFrames$.subscribe(() => {
-            // Get position
-            let current = {}
-            current.x = vector.pixVal(bluebox.style.left)
-            current.y = vector.pixVal(bluebox.style.top)
-
-            // Get distance to mousepos and scale distance down
-            let dist = vector.distance(current, blueboxMousePos)
-            let velocity = vector.scale(dist, speedFactor)
-            let next = vector.add(current, velocity)
-            next = vector.vfloor(next)
-
-            // Set position
-            bluebox.style.left = next.x + 'px'
-            bluebox.style.top = next.y + 'px'
-        })
+    getPosition() {
+        return {
+            x: vector.pixVal(this.element.style.left),
+            y: vector.pixVal(this.element.style.top)
+        }
     }
-})
+
+    setPosition(pos) {
+        this.element.style.left = pos.x + 'px'
+        this.element.style.top = pos.y + 'px'
+    }
+
+    updatePosition() {
+        this.setPosition(this.mousepos)
+    }
+}
+
+class DraggableBox extends Box {
+    constructor(root, x, y, color, dragFactor) {
+        super(root, x, y, color)
+        this.dragFactor = dragFactor
+    }
+
+    updatePosition() {
+        let current = this.getPosition()
+        
+        // Get distance to mousepos and scale distance down
+        let dist = vector.distance(current, this.mousepos)
+        let velocity = vector.scale(dist, this.dragFactor)
+        let next = vector.add(current, velocity)
+        next = vector.vfloor(next)
+
+        // Set position
+        this.setPosition(next)
+    }
+}
+
+let redbox = new Box(app, 100, 100, 'red')
+let bluebox = new DraggableBox(app, 200, 100, 'blue', 0.25)
+let greenbox = new DraggableBox(app, 300, 100, 'green', 0.05)
