@@ -10,7 +10,7 @@ import {
     animationFrameScheduler,
     combineLatest
 } from 'rxjs';
-import { map, repeat, scan } from 'rxjs/operators';
+import { map, repeat, scan, observeOn } from 'rxjs/operators';
 
 // Animation observable
 export const animationFrames$ = of(0, animationFrameScheduler)
@@ -22,6 +22,7 @@ export const animationFrames$ = of(0, animationFrameScheduler)
 // Mouse move position observable
 export const mouseMovePos$ = fromEvent(document, 'mousemove')
     .pipe(
+        observeOn(animationFrameScheduler),
         map(event => ({ x: event.clientX, y: event.clientY }))
     )
 
