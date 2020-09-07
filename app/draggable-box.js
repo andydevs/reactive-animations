@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs'
  */
 export default class DraggableBox extends Box {
     /**
+     * Construct draggable box
      * 
      * @param {HTMLElement} root element to put box in
      * @param {int} x initial x position
@@ -45,8 +46,7 @@ export default class DraggableBox extends Box {
      */
     handleToggleDrag() {
         if (this.subscription.closed) {
-            this.subscription = observables
-                .mousePos$
+            this.subscription = observables.mousePos$
                 .subscribe(this.handleUpdatePosition)
         }
         else {
@@ -60,15 +60,13 @@ export default class DraggableBox extends Box {
      * @param {object} mousepos next mouse position
      */
     handleUpdatePosition(mousepos) {
-        let current = this.getPosition()
-        
-        // Get distance to mousepos and scale distance down
-        let dist = vector.distance(current, mousepos)
-        let velocity = vector.scale(dist, this.dragFactor)
-        let next = vector.add(current, velocity)
-        next = vector.vfloor(next)
+        // The velocity is proportional to distance to mousepos
+        let distance = vector.distance(this.position, mousepos)
+        let velocity = vector.scale(distance, this.dragFactor)
+        let next = vector.add(this.position, velocity)
+        next = vector.vfloor(next) // Floor to pixel value
 
         // Set position
-        this.setPosition(next)
+        this.position = next
     }
 }

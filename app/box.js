@@ -35,7 +35,7 @@ export default class Box {
     /**
      * Get current box position
      */
-    getPosition() {
+    get position() {
         return {
             x: pixVal(this.element.style.left),
             y: pixVal(this.element.style.top)
@@ -47,7 +47,7 @@ export default class Box {
      * 
      * @param {object} pos next position
      */
-    setPosition(pos) {
+    set position(pos) {
         this.element.style.left = pos.x + 'px'
         this.element.style.top = pos.y + 'px'
     }
