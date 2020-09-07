@@ -6,23 +6,37 @@
  */
 import './style/main.scss'
 import * as vector from './vector';
-import { fromEvent, of, animationFrameScheduler, animationFrame } from 'rxjs'
-import { map, repeat } from 'rxjs/operators';
+import { 
+    fromEvent,
+    of,
+    animationFrameScheduler,
+    combineLatest,
+    Subscription
+} from 'rxjs'
+import {
+    map,
+    repeat,
+    scan 
+} from 'rxjs/operators';
 
 // Animation observable
-let animationFrames$ = of(null, animationFrameScheduler)
+let animationFrames$ = of(0, animationFrameScheduler)
     .pipe(
-        repeat()
+        repeat(),
+        scan(frame => frame + 1)
     )
 
-// Mouse position observable
-let mousePos$ = fromEvent(document, 'mousemove')
+// Mouse move position observable
+let mouseMovePos$ = fromEvent(document, 'mousemove')
     .pipe(
         map(event => ({ x: event.clientX, y: event.clientY }))
     )
 
-// Speed Factor
-const speedFactor = 0.25
+// Tracks mouse position at every animation frame
+let mousePos$ = combineLatest(animationFrames$, mouseMovePos$)
+    .pipe(
+        map( ([frame, mousepos]) => mousepos )
+    )
 
 // Get app
 let app = document.getElementById('app')
@@ -38,29 +52,28 @@ class Box {
         root.appendChild(this.element)
 
         // Bind handler functions
-        this.handleClickObserver = this.handleClickObserver.bind(this)
+        this.handleToggleSubscription = this.handleToggleSubscription.bind(this)
+        this.handleUpdatePosition = this.handleUpdatePosition.bind(this)
 
-        // Current mouse position
-        this.mousepos = {}
+        // Subscription holder
+        this.subscription = Subscription.EMPTY
 
-        // Click observer and subscriptions
-        this.clickObserver$ = fromEvent(this.element, 'click')
-        this.clickObserver$.subscribe(this.handleClickObserver)
+        // Create click observable
+        this.clickObservable$ = fromEvent(this.element, 'click')
+        this.clickObservable$.subscribe(this.handleToggleSubscription)
     }
 
-    handleClickObserver() {
-        if (this.subscription) {
-            this.subscription.unsubscribe()
-            this.subscription = null
+    handleToggleSubscription() {
+        if (this.subscription.closed) {
+            this.subscription = mousePos$.subscribe(this.handleUpdatePosition)
         }
         else {
-            this.subscription = mousePos$.subscribe(pos => {
-                this.mousepos = pos
-            })
-            this.subscription.add(animationFrames$.subscribe(() => {
-                this.updatePosition()
-            }))
+            this.subscription.unsubscribe()
         }
+    }
+    
+    handleUpdatePosition(pos) {
+        this.setPosition(pos)
     }
 
     getPosition() {
@@ -74,10 +87,6 @@ class Box {
         this.element.style.left = pos.x + 'px'
         this.element.style.top = pos.y + 'px'
     }
-
-    updatePosition() {
-        this.setPosition(this.mousepos)
-    }
 }
 
 class DraggableBox extends Box {
@@ -86,11 +95,11 @@ class DraggableBox extends Box {
         this.dragFactor = dragFactor
     }
 
-    updatePosition() {
+    handleUpdatePosition(mousepos) {
         let current = this.getPosition()
         
         // Get distance to mousepos and scale distance down
-        let dist = vector.distance(current, this.mousepos)
+        let dist = vector.distance(current, mousepos)
         let velocity = vector.scale(dist, this.dragFactor)
         let next = vector.add(current, velocity)
         next = vector.vfloor(next)
