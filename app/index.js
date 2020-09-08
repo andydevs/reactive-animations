@@ -6,6 +6,12 @@
  */
 import './style/main.scss'
 import DraggableBox from './draggable-box';
+import { windowSize$ } from './observable';
+
+// Debug resize events
+windowSize$.subscribe(event => {
+    console.log(event)
+})
 
 // Get app container
 let app = document.getElementById('app')

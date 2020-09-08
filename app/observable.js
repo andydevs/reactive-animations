@@ -31,3 +31,12 @@ export const mousePos$ = combineLatest(animationFrames$, mouseMovePos$)
     .pipe(
         map( ([frame, mousepos]) => mousepos )
     )
+
+// Tracks resize events
+export const windowSize$ = fromEvent(window, 'resize')
+    .pipe(
+        map(event => ({
+            width: event.target.innerWidth,
+            height: event.target.innerHeight
+        }))
+    )
