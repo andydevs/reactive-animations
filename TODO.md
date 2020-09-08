@@ -4,12 +4,13 @@ Reactive Animations: TODO
 Backlog
 ------------------------------------------------------------------
 
-- [ ] React to window resize
-- [ ] Touch Support
-- [ ] Bounded touch animations
-
 Upcoming
 ------------------------------------------------------------------
+
+- [x] React to window resize
+- [ ] Click and drag system
+- [ ] Touch Support
+- [ ] Bounded touch animations
 
 Changelog
 ------------------------------------------------------------------
