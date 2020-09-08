@@ -27,9 +27,6 @@ export default class Box {
         this.element.style.left = x + 'px'
         this.element.style.top = y + 'px'
         root.appendChild(this.element)
-
-        // Get click observable
-        this.clickObservable$ = fromEvent(this.element, 'click')
     }
 
     /**

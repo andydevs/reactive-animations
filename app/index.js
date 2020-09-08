@@ -6,12 +6,6 @@
  */
 import './style/main.scss'
 import DraggableBox from './draggable-box';
-import { windowClampedMousePos$ } from './observable';
-
-// Debug resize events
-windowClampedMousePos$.subscribe(width => {
-    console.log(width)
-})
 
 // Get app container
 let app = document.getElementById('app')

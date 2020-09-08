@@ -7,7 +7,7 @@
 import * as vector from './vector';
 import * as observables from './observable';
 import Box from './box';
-import { Subscription } from 'rxjs'
+import { Subscription, fromEvent } from 'rxjs'
 
 /**
  * Box element that is draggable
@@ -38,7 +38,8 @@ export default class DraggableBox extends Box {
         this.handleUpdatePosition = this.handleUpdatePosition.bind(this)
 
         // Subscribe drag toggler to click observer
-        this.clickObservable$.subscribe(this.handleToggleDrag)
+        this.clicks$ = fromEvent(this.element, 'click')
+        this.clicks$.subscribe(this.handleToggleDrag)
     }
 
     /**
