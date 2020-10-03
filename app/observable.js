@@ -33,10 +33,8 @@ export const mouseMovePos$ = fromEvent(document, 'mousemove')
     )
 
 // Tracks mouse position at every animation frame
-export const mousePos$ = combineLatest(
-    animationFrames$,
-    mouseMovePos$,
-    (_, pos) => pos)
+export const mousePos$ = combineLatest([animationFrames$, mouseMovePos$])
+    .pipe(map(([_, pos]) => pos))
 
 // Tracks resize events
 export const windowSize$ = fromEvent(window, 'resize')
