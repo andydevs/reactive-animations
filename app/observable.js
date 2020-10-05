@@ -6,7 +6,7 @@
  */
 import { 
     fromEvent,
-    of,
+    scheduled,
     animationFrameScheduler,
     combineLatest
 } from 'rxjs';
@@ -18,7 +18,7 @@ import {
 } from 'rxjs/operators';
 
 // Animation observable
-export const animationFrames$ = of(0, animationFrameScheduler)
+export const animationFrames$ = scheduled([0], animationFrameScheduler)
     .pipe(
         repeat(),
         scan(frame => frame + 1)
