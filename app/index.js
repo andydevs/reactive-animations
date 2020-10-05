@@ -5,43 +5,9 @@
  * Created: 9 - 7 - 2020
  */
 import './style/main.scss'
+import { toggleSubscription, interpolate } from './operations';
 import { mousePos$ } from './observable';
-import { fromEvent, Subscription } from 'rxjs';
-import { scan } from 'rxjs/operators';
-
-function toggleSubscription(observable$, subFunc) {
-    return {
-        subscription: Subscription.EMPTY,
-        next() {
-            if (this.subscription.closed) {
-                this.subscription = observable$.subscribe(subFunc)
-            }
-            else {
-                this.subscription.unsubscribe()
-            }
-        },
-        error() {
-            if (!this.subscription.closed) {
-                this.subscription.unsubscribe()
-            }
-        },
-        complete() {
-            if (!this.subscription.closed) {
-                this.subscription.unsubscribe()
-            }
-        }
-    }
-}
-
-function interpolate(alpha) {
-    let beta = 1 - alpha
-    return scan(
-        (pos, next) => ({
-            x: alpha * next.x + beta * pos.x,
-            y: alpha * next.y + beta * pos.y
-        })
-    )
-}
+import { fromEvent } from 'rxjs';
 
 // Get app
 const app = document.getElementById('app')
@@ -71,28 +37,30 @@ function createBox(color, initial={x: 0, y: 0}) {
     return box
 }
 
+function clickAndDrag(box) {
+    return fromEvent(box, 'click').subscribe(
+        toggleSubscription(
+            mousePos$,
+            pos => moveBox(box, pos)
+        )
+    )
+}
+
+function clickAndDragInterpolated(box, alpha) {
+    return fromEvent(box, 'click').subscribe(
+        toggleSubscription(
+            interpolate(alpha)(mousePos$),
+            pos => moveBox(box, pos)
+        )
+    )
+}
+
 // Create boxes
 let redbox = createBox('red', { x: 100, y: 100 })
+clickAndDrag(redbox)
+
 let bluebox = createBox('blue', { x: 200, y: 100 })
+clickAndDragInterpolated(bluebox, 0.75)
+
 let greenbox = createBox('green', { x: 300, y: 100 })
-
-fromEvent(redbox, 'click').subscribe(
-    toggleSubscription(
-        mousePos$,
-        pos => moveBox(redbox, pos)
-    )
-)
-
-fromEvent(bluebox, 'click').subscribe(
-    toggleSubscription(
-        interpolate(0.75)(mousePos$),
-        pos => moveBox(bluebox, pos)
-    )
-)
-
-fromEvent(greenbox, 'click').subscribe(
-    toggleSubscription(
-        interpolate(0.03)(mousePos$),
-        pos => moveBox(greenbox, pos)
-    )
-)
+clickAndDragInterpolated(greenbox, 0.03)
