@@ -4,7 +4,8 @@ on:
   push:
     branches: [ master ]
 jobs:
-  build:
+  build_and_deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,11 +16,7 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Publish to GitHub Pages
+      - name: Publish to Github Pages
         uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
         with:
           dir: ./public
