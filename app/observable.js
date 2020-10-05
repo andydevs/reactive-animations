@@ -27,11 +27,11 @@ export const animationFrames$ = scheduled([0], animationFrameScheduler)
 // Mouse move position observable
 export const mouseMovePos$ = fromEvent(document, 'mousemove')
     .pipe(
-        observeOn(animationFrameScheduler),
         map(event => ({ 
             x: event.clientX,
             y: event.clientY 
-        }))
+        })),
+        observeOn(animationFrameScheduler)
     )
 
 // Tracks mouse position at every animation frame
