@@ -4,8 +4,18 @@
  * Author:  Anshul Kharbanda
  * Created: 9 - 7 - 2020
  */
-import { Subscriber, Subscription } from 'rxjs'
-import { scan } from 'rxjs/operators'
+import { 
+    animationFrameScheduler, 
+    combineLatest, 
+    scheduled, 
+    Subscription 
+} from 'rxjs'
+import { 
+    observeOn, 
+    repeat, 
+    scan, 
+    map 
+} from 'rxjs/operators'
 
 /**
  * A meta subscriber that toggles a subscription to an observable
@@ -57,4 +67,22 @@ export function interpolate(alpha) {
             y: alpha * next.y + beta * pos.y
         })
     )
+}
+
+/**
+ * Operator that returns an observable that emits the last 
+ * emitted value from the given observable every animation 
+ * frame.
+ * 
+ * @return continuous animation operator
+ */
+export function continuousAnimationSignal() {
+    const frameSignal$ = scheduled([null], animationFrameScheduler).pipe(repeat())
+    return function(source$) {
+        return combineLatest([frameSignal$, source$])
+            .pipe(
+                map(([_, out]) => out),
+                observeOn(animationFrameScheduler)
+            )
+    }
 }

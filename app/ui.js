@@ -4,12 +4,26 @@
  * Author:  Anshul Kharbanda
  * Created: 9 - 7 - 2020
  */
-import { toggleSubscription, interpolate } from './operations';
-import { mousePos$ } from './observable';
+import {
+    toggleSubscription,
+    interpolate,
+    continuousAnimationSignal
+} from './operations';
 import { fromEvent, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 // Get app
 const app = document.getElementById('app')
+
+// Mouse position observable
+const mousePos$ = fromEvent(document, 'mousemove')
+    .pipe(
+        map(event => ({ 
+            x: event.clientX,
+            y: event.clientY 
+        })),
+        continuousAnimationSignal()
+    )
 
 /**
  * Moves box to new position
