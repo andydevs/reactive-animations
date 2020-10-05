@@ -10,10 +10,12 @@ import {
     animationFrameScheduler,
     combineLatest
 } from 'rxjs';
-import { map, repeat, scan, observeOn, startWith } from 'rxjs/operators';
-
-// Clamp function
-const clamp = (x, w) => x < 0 ? 0 : (x > w ? w : x)
+import {
+    map,
+    repeat,
+    scan,
+    observeOn
+} from 'rxjs/operators';
 
 // Animation observable
 export const animationFrames$ = of(0, animationFrameScheduler)
@@ -35,27 +37,3 @@ export const mouseMovePos$ = fromEvent(document, 'mousemove')
 // Tracks mouse position at every animation frame
 export const mousePos$ = combineLatest([animationFrames$, mouseMovePos$])
     .pipe(map(([_, pos]) => pos))
-
-// Tracks resize events
-export const windowSize$ = fromEvent(window, 'resize')
-    .pipe(
-        map(event => ({
-            width: event.target.innerWidth,
-            height: event.target.innerHeight
-        })),
-        startWith({ 
-            width: window.innerWidth,
-            height: window.innerHeight 
-        })
-    )
-
-// Window clamped mouse position
-export const windowClampedMousePos$ = combineLatest(
-    animationFrames$,
-    windowSize$,
-    mouseMovePos$,
-    (_, window, mouse) => ({
-        x: clamp(mouse.x, window.width),
-        y: clamp(mouse.y, window.height)
-    })
-)
