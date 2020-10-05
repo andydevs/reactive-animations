@@ -5,7 +5,32 @@
  * Created: 9 - 7 - 2020
  */
 import './style/main.scss'
-import {  } from './observable';
+import { mousePos$ } from './observable';
+import { fromEvent, Subscription } from 'rxjs';
+
+function toggleSubscription(observable$, subFunc) {
+    return {
+        subscription: Subscription.EMPTY,
+        next() {
+            if (this.subscription.closed) {
+                this.subscription = observable$.subscribe(subFunc)
+            }
+            else {
+                this.subscription.unsubscribe()
+            }
+        },
+        error() {
+            if (!this.subscription.closed) {
+                this.subscription.unsubscribe()
+            }
+        },
+        complete() {
+            if (!this.subscription.closed) {
+                this.subscription.unsubscribe()
+            }
+        }
+    }
+}
 
 // Get app
 const app = document.getElementById('app')
@@ -39,3 +64,10 @@ function createBox(color, initial={x: 0, y: 0}) {
 let redbox = createBox('red', { x: 100, y: 100 })
 let bluebox = createBox('blue', { x: 200, y: 100 })
 let greenbox = createBox('green', { x: 300, y: 100 })
+
+fromEvent(redbox, 'click').subscribe(
+    toggleSubscription(
+        mousePos$,
+        pos => moveBox(redbox, pos)
+    )
+)
