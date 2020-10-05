@@ -37,6 +37,7 @@ export function moveBox(box, pos) {
 }
 
 /**
+ * Creates a box element
  * 
  * @param {string} color color of box
  * @param {{x: float, y: float}} initial initial position
