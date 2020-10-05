@@ -7,8 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Current Working Directory
+        run: pwd
       - name: List directory
-        run: ls
+        run: ls -lrt
       - name: Install Dependencies
         run: npm install
       - name: Build
