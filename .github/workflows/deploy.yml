@@ -1,0 +1,20 @@
+# Deploy to github pages on every commit
+name: Deploy
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v2.1.3
+        with:
+          build_dir: public
