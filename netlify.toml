@@ -1,9 +1,0 @@
-# Use this template for building basic static websites
-# 
-# Author:  [Your Name Here]
-# Created: [Date of Creation]
-
-# Build config
-[build]
-    command='npm run build'
-    publish='public/'

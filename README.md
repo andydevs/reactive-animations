@@ -1,8 +1,6 @@
 Reactive Animations
 ===========================================================
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b38ce71e-9d91-4cae-ad51-7384898f87cd/deploy-status)](https://app.netlify.com/sites/reactive-animations/deploys)
-
 Experiments in using RxJS to reactively animate objects
 
 Development
