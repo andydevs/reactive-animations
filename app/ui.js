@@ -43,7 +43,7 @@ export function moveBox(box, pos) {
  */
 export function createBox(color, initial={x: 0, y: 0}) {
     let box = document.createElement('div')
-    box.classList.add('animated-box')
+    box.classList.add('box')
     box.style.backgroundColor = color
     app.appendChild(box)
     moveBox(box, initial)
