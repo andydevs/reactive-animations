@@ -7,6 +7,7 @@
 import './style/main.scss'
 import { mousePos$ } from './observable';
 import { fromEvent, Subscription } from 'rxjs';
+import { scan } from 'rxjs/operators';
 
 function toggleSubscription(observable$, subFunc) {
     return {
@@ -30,6 +31,16 @@ function toggleSubscription(observable$, subFunc) {
             }
         }
     }
+}
+
+function interpolate(alpha) {
+    let beta = 1 - alpha
+    return scan(
+        (pos, next) => ({
+            x: alpha * next.x + beta * pos.x,
+            y: alpha * next.y + beta * pos.y
+        })
+    )
 }
 
 // Get app
@@ -69,5 +80,19 @@ fromEvent(redbox, 'click').subscribe(
     toggleSubscription(
         mousePos$,
         pos => moveBox(redbox, pos)
+    )
+)
+
+fromEvent(bluebox, 'click').subscribe(
+    toggleSubscription(
+        interpolate(0.75)(mousePos$),
+        pos => moveBox(bluebox, pos)
+    )
+)
+
+fromEvent(greenbox, 'click').subscribe(
+    toggleSubscription(
+        interpolate(0.03)(mousePos$),
+        pos => moveBox(greenbox, pos)
     )
 )
