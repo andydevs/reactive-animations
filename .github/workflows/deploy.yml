@@ -17,7 +17,4 @@ jobs:
       - name: Build
         run: npm run build
       - name: Publish to Github Pages
-        uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
-        with:
-          dir: ./public
-          token: ${{ secrets.ACCESS_TOKEN }}
+        run: npm run deploy
