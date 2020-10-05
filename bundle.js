@@ -320,7 +320,7 @@ function createBox(color) {
     y: 0
   };
   var box = document.createElement('div');
-  box.classList.add('animated-box');
+  box.classList.add('box');
   box.style.backgroundColor = color;
   app.appendChild(box);
   moveBox(box, initial);
@@ -367,7 +367,7 @@ function clickAndDragInterpolated(box, alpha) {
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "/**\r\n * Use this template for building basic static websites\r\n * \r\n * Author:  [Your Name Here]\r\n * Created: [Date of Creation]\r\n */\nbody {\n  margin: 0; }\n\n#app {\n  position: absolute;\n  width: 100%;\n  height: 100%; }\n\n.animated-box {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  transform: translate(-50%, -50%); }\n", ""]);
+exports.push([module.i, "/**\r\n * Use this template for building basic static websites\r\n * \r\n * Author:  [Your Name Here]\r\n * Created: [Date of Creation]\r\n */\nbody {\n  margin: 0; }\n\n#app {\n  position: absolute;\n  width: 100%;\n  height: 100%; }\n\n.box {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  transform: translate(-50%, -50%); }\n", ""]);
 // Exports
 module.exports = exports;
 
