@@ -5,7 +5,8 @@
  * Created: 9 - 7 - 2020
  */
 import {
-    toggleSubscription,
+    toggleState,
+    conditionalSubscription,
     interpolate,
     continuousAnimationSignal
 } from './operations';
@@ -59,12 +60,14 @@ export function createBox(color, initial={x: 0, y: 0}) {
  * @returns {Subscription} observable subscription for click and drag
  */
 export function clickAndDrag(box) {
-    return fromEvent(box, 'click').subscribe(
-        toggleSubscription(
-            mousePos$,
-            pos => moveBox(box, pos)
+    return fromEvent(box, 'click')
+        .pipe(toggleState(false))
+        .subscribe(
+            conditionalSubscription(
+                mousePos$,
+                pos => moveBox(box, pos)
+            )
         )
-    )
 }
 
 /**
@@ -76,10 +79,12 @@ export function clickAndDrag(box) {
  * @returns {Subscription} observable subscription for click and drag
  */
 export function clickAndDragInterpolated(box, alpha) {
-    return fromEvent(box, 'click').subscribe(
-        toggleSubscription(
-            interpolate(alpha)(mousePos$),
-            pos => moveBox(box, pos)
+    return fromEvent(box, 'click')
+        .pipe(toggleState(false))
+        .subscribe(
+            conditionalSubscription(
+                interpolate(alpha)(mousePos$),
+                pos => moveBox(box, pos)
+            )
         )
-    )
 }

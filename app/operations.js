@@ -8,6 +8,7 @@ import {
     animationFrameScheduler, 
     combineLatest, 
     scheduled, 
+    Subscriber, 
     Subscription 
 } from 'rxjs'
 import { 
@@ -18,22 +19,33 @@ import {
 } from 'rxjs/operators'
 
 /**
- * A meta subscriber that toggles a subscription to an observable
- * on and off every time the observable being subscribed to emits
+ * An operator that toggles a boolean on and off when
+ * The source observable emits
+ * 
+ * @param {boolean} initial initial state of toggler
+ */
+export function toggleState(initial=false) {
+    return scan(state => !state, initial)
+}
+
+/**
+ * Meta subscriber that manages a subscription to an observable
+ * Subscribing when the input is true and unsubscribing when it
+ * is false
  * 
  * @param {Observable<any>} observable$ the observable to subscribe to
  * @param {Subscriber} subber subscriber that subscribes to the observable
  * 
- * @returns {Subscriber} the subscriber that implements toggling
+ * @return {Subscriber} the subscriber that implements toggling
  */
-export function toggleSubscription(observable$, subber) {
+export function conditionalSubscription(observable$, subber) {
     return {
         subscription: Subscription.EMPTY,
-        next() {
-            if (this.subscription.closed) {
+        next(state) {
+            if (state && this.subscription.closed) {
                 this.subscription = observable$.subscribe(subber)
             }
-            else {
+            else if (!this.subscription.closed) {
                 this.subscription.unsubscribe()
             }
         },
@@ -77,7 +89,8 @@ export function interpolate(alpha) {
  * @return continuous animation operator
  */
 export function continuousAnimationSignal() {
-    const frameSignal$ = scheduled([null], animationFrameScheduler).pipe(repeat())
+    const frameSignal$ = scheduled([null], animationFrameScheduler)
+        .pipe(repeat())
     return function(source$) {
         return combineLatest([frameSignal$, source$])
             .pipe(
