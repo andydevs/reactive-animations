@@ -18,5 +18,5 @@ let greenbox = createBox('green', { x: 300, y: 100 })
 
 // Add click and drag
 clickAndDrag(redbox)
-clickAndDragInterpolated(bluebox, 0.75)
+clickAndDragInterpolated(bluebox, 0.5)
 clickAndDragInterpolated(greenbox, 0.03)
